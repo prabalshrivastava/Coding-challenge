@@ -1,0 +1,283 @@
+<head>
+    <meta charset = "UTF-8" />
+    <title>The Game of Life</title>
+    <link rel="stylesheet" href="life.css">    
+
+	<style> 
+body {
+    padding: 20px;
+    background-color: #444;
+}
+
+#gridContainer {
+    padding-bottom: 10px;
+}
+
+table {
+    background-color: #C5D6C6;
+    border-spacing: 0;
+}
+
+td {
+    border: 1px solid #F1F5DA;
+    border-radius: 3px;
+    width: 10px;
+    height: 10px;
+}
+
+span {
+    color: #222;
+}
+
+#start,
+#clear,
+#random {
+    padding: .75em;
+    border-radius: 5px;
+    border: none;    
+    background: linear-gradient(
+        to bottom right,
+        #C5DEC6, #587559);
+}
+
+td.dead {
+    background-color: transparent;
+}
+
+td.live {
+    background-color: #CC4774;
+    border-radius: 10px;
+}
+
+.mydiv{
+    height: 10px;
+    width: 10px;
+    border: solid blue;
+    color:blue;
+}
+.box{
+    height: 10px;
+    width: 10px;
+    border: solid red;
+    color:red;
+}
+
+
+	</style>
+
+</head>
+<body>
+
+<div id="anotherDiv">
+    
+</div>
+
+<div class="controls">
+<button id="start"><span>Start</span></button>
+<button id="clear"><span>Clear</span></button>
+<button id="random"><span>Random</span></button>
+</div>
+    
+<script>
+
+var universe = [
+        // {
+        //     row: 1,
+        //     col: 6
+        // }, 
+        // {
+        //     row: 3,
+        //     col: 4
+        // },
+        // {
+        //     row: 3,
+        //     col: 6
+        // }
+
+        //test data 2
+        // {
+        //     row: 1,
+        //     col: 0
+        // }, 
+        // {
+        //     row: 1,
+        //     col: 1
+        // }
+        // ,
+        // {
+        //     row: 1,
+        //     col: 2
+        // }
+
+        //test data 3-BLINKER
+        // {
+        //     row: 2,
+        //     col: 4
+        // }, 
+        // {
+        //     row: 2,
+        //     col: 5
+        // },
+        // {
+        //     row: 2,
+        //     col: 6
+        // }
+        //test data 3-BLOCK 
+        // {
+        //     row: 2,
+        //     col: 4
+        // }, 
+        // {
+        //     row: 2,
+        //     col: 5
+        // },
+        // {
+        //     row: 3,
+        //     col: 4
+        // },
+        // {
+        //     row: 3,
+        //     col: 5
+        // }
+
+        //test data -BLOCK 
+        {
+            row: 0,
+            col: 5
+        },
+        {
+            row: 1,
+            col: 6
+        },
+        {
+            row: 2,
+            col: 4
+        }, 
+        {
+            row: 2,
+            col: 5
+        },
+        {
+            row: 3,
+            col: 4
+        },
+        {
+            row: 3,
+            col: 5
+        }
+    ];
+
+
+    function plotInUI(){
+        var grid = document.getElementById('anotherDiv');
+        console.log(universe);
+        for(var l=0;l<universe.length;l++){
+            var row11 = universe[l].row -1;
+            var col11 = universe[l].col -1;
+            for(var ii=row11; ii< universe[l].row+ 2 ; ii++) {
+                grid.innerHTML += '<div id="'+ ii +''+ jj +'"></div>';
+                for(var jj=col11; jj<universe[l].col+ 2 ; jj++) {
+                    if(universe[l].row==ii && universe[l].col==jj){
+                        document.getElementById(ii + '' + jj).innerHTML += '<span class="box"></span>';
+                    }else{
+                        document.getElementById(ii + '' + jj).innerHTML += '<span class="mydiv"></span>';
+                    }  
+                }
+            }
+        }
+    }
+
+    function nextGeneration(){
+        var _nextGeneration = [];
+        for(var l=0;l<universe.length;l++){
+            //console.log(universe[l].row,universe[l].col);
+            var row11 = universe[l].row -1;
+            var col11 = universe[l].col -1;
+            // console.log(row11,col11);
+            for(var ii=row11; ii< universe[l].row+ 2 ; ii++) {
+                for(var jj=col11; jj<universe[l].col+ 2 ; jj++) {
+                    // console.log("------>",ii, jj);
+                    if(_nextGeneration.some(elem => (elem.row === ii && elem.col === jj))){
+                        // console.log("element already exists : ",ii,jj);
+                    }else{
+                        nextGenerationCell(ii,jj,_nextGeneration);
+                    }
+                }
+            }
+        }
+        console.log(_nextGeneration);
+        universe = _nextGeneration;
+        return universe;
+    }
+
+    function nextGenerationCell(row, col,_nextGeneration){
+        var _isAlive = isAlive(row, col);
+        var count = getAliveNeighbourCount(row, col);
+        var __isAlive = _isAlive?"Live" : "Dead";
+        if(_isAlive){
+            if(count<2){//dies due to underpopulation
+                // console.log("row:" +row + ", col:" +col + ", count:" +count,__isAlive,"->dead");
+            }else if(count === 2 || count === 3){//lives for the next generation
+                getAliveNeighbourCount(row, col);
+                _nextGeneration.push({
+                    row: row,
+                    col: col
+                });
+                // console.log("row:" +row + ", col:" +col + ", count:" +count,__isAlive,"->live");
+            }else if(count>3){//dies due to overpopulation
+                // console.log("row:" +row + ", col:" +col + ", count:" +count,__isAlive,"->dead");
+            }else{
+                // console.log("row:" +row + ", col:" +col + ", count:" +count,__isAlive,"->dead");
+            }   
+        }else{
+            if(count==3){//dead cell comes to life->Reproduction
+                _nextGeneration.push({
+                    row: row,
+                    col: col
+                });
+                // console.log("row:" +row + ", col:" +col + ", count:" +count,__isAlive,"->live");  
+            }else{
+                // console.log("row:" +row + ", col:" +col + ", count:" +count,__isAlive,"->dead");
+            }
+        }
+        return _nextGeneration;
+    }
+
+    function isAlive(row, col) {
+        for(var k=0;k<universe.length;k++){
+            //if (universe[k].row === row && universe[k].col === col) {
+            if(universe.some(elem => (elem.row === row && elem.col === col))){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function getAliveNeighbourCount(row,col) {
+        var count = 0;
+        var row1 = row -1;
+        var col1 = col -1;
+        for(var x=row1; x< row+ 2 ; x++) {
+            for(var y=col1; y<col+ 2 ; y++) {
+                var isSelf = !(x==row && y==col);//do not consider yourself as neighbour
+                if (isSelf && isAlive(x,y)) {
+                    // console.log(x,y);
+                        count++;
+                }
+            }
+        }
+        return count;
+    }
+    console.log(getAliveNeighbourCount(2,5));
+    plotInUI();
+    nextGeneration();
+    plotInUI();
+    nextGeneration();
+    plotInUI();
+    nextGeneration();
+    plotInUI();
+    nextGeneration();
+    plotInUI();
+</script>
+    
+</body>
