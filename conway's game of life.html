@@ -49,37 +49,41 @@ td.live {
     border-radius: 10px;
 }
 
-.mydiv{
-    height: 10px;
-    width: 10px;
-    border: solid blue;
-    color:blue;
+.mySpan{
+    border: solid black;
+    width:2px;height:2px;padding:10px;background-color: blue;
+    color: white;
 }
-.box{
-    height: 10px;
-    width: 10px;
-    border: solid red;
-    color:red;
+.active{
+    border: solid black;
+    width:2px;height:2px;padding:10px;background-color: red;
+    color: white;
 }
 
+#grid{
+    border: 3px solid red;
 
+}
 	</style>
 
 </head>
 <body>
 
 <div id="anotherDiv">
-    
+    <div id="grid">
+        
+    </div>
 </div>
 
 <div class="controls">
-<button id="start"><span>Start</span></button>
+<!-- <button id="start"><span>Start</span></button>
 <button id="clear"><span>Clear</span></button>
-<button id="random"><span>Random</span></button>
+<button id="random"><span>Random</span></button> -->
 </div>
-    
-<script>
 
+<script src="jquery.js"></script>
+<script>
+var oldUniverse=[];
 var universe = [
         // {
         //     row: 1,
@@ -140,52 +144,48 @@ var universe = [
         //     col: 5
         // }
 
-        //test data -BLOCK 
-        {
-            row: 0,
-            col: 5
-        },
-        {
-            row: 1,
-            col: 6
-        },
-        {
-            row: 2,
-            col: 4
-        }, 
-        {
-            row: 2,
-            col: 5
-        },
-        {
-            row: 3,
-            col: 4
-        },
-        {
-            row: 3,
-            col: 5
-        }
+        //test data -glider 
+        // {
+        //     row: 1,
+        //     col: 6
+        // },
+        // {
+        //     row: 2,
+        //     col: 7
+        // },
+        // {
+        //     row: 3,
+        //     col: 5
+        // }, 
+        // {
+        //     row: 3,
+        //     col: 6
+        // },
+        // {
+        //     row: 3,
+        //     col: 7
+        // }
+
+        //gosper glider gun
+        // {row:5 ,col:1},{row:5 ,col:2},{row:6 ,col:1},{row:6 ,col:2},{row:5 ,col:11},{row:6 ,col:11},{row:7 ,col:11},{row:4 ,col:12},{row:3 ,col:13},{row:3 ,col:14},{row:8 ,col:12},{row:9 ,col:13},{row:9 ,col:14},{row:6 ,col:15},{row:4 ,col:16},{row:5 ,col:17},{row:6 ,col:17},{row:7 ,col:17},{row:6 ,col:18},{row:8 ,col:16},{row:3 ,col:21},{row:4 ,col:21},{row:5 ,col:21},{row:3 ,col:22},{row:4 ,col:22},{row:5 ,col:22},{row:2 ,col:23},{row:6 ,col:23},{row:1 ,col:25},{row:2 ,col:25},{row:6 ,col:25},{row:7 ,col:25},{row:3 ,col:35},{row:4 ,col:35},{row:3 ,col:36},{row:4 ,col:36}
+        //combination
+        // {row:0,col:12},{row:1,col:12},{row:2,col:12},{row:1,col:6},{row:2,col:7},{row:0,col:8},{row:1,col:8},{row:2,col:8}
+        //beacon
+        {row:1,col:1},{row:2,col:1},{row:1,col:2},{row:4,col:3},{row:3,col:4},{row:4,col:4}
     ];
 
-
-    function plotInUI(){
-        var grid = document.getElementById('anotherDiv');
-        console.log(universe);
-        for(var l=0;l<universe.length;l++){
-            var row11 = universe[l].row -1;
-            var col11 = universe[l].col -1;
-            for(var ii=row11; ii< universe[l].row+ 2 ; ii++) {
-                grid.innerHTML += '<div id="'+ ii +''+ jj +'"></div>';
-                for(var jj=col11; jj<universe[l].col+ 2 ; jj++) {
-                    if(universe[l].row==ii && universe[l].col==jj){
-                        document.getElementById(ii + '' + jj).innerHTML += '<span class="box"></span>';
-                    }else{
-                        document.getElementById(ii + '' + jj).innerHTML += '<span class="mydiv"></span>';
-                    }  
-                }
+    function initializeGrid(){
+        var grid = document.getElementById('grid');  
+        var currentDiv = 0;
+        for(var i=0;i<=30;i++){
+            grid.innerHTML += '<div id="'+i+'"></div>';
+            for(var j=0;j<=50;j++){
+                    var currentDiv = document.getElementById(i);
+                    currentDiv.innerHTML +=  '<span class="mySpan" id="'+i+' '+j + '"></span>';
             }
         }
     }
+
 
     function nextGeneration(){
         var _nextGeneration = [];
@@ -268,16 +268,70 @@ var universe = [
         }
         return count;
     }
-    console.log(getAliveNeighbourCount(2,5));
-    plotInUI();
-    nextGeneration();
-    plotInUI();
-    nextGeneration();
-    plotInUI();
-    nextGeneration();
-    plotInUI();
-    nextGeneration();
-    plotInUI();
+
+    
+    function plotInUI(){
+        for(var l=0;l<universe.length;l++){
+            var currentElement = document.getElementById(universe[l].row +' '+ universe[l].col);
+            currentElement.classList.remove("mySpan");
+            currentElement.classList.add("active");
+        }
+        oldUniverse=universe;
+    }
+
+    function clearGrid(){
+        for(var l=0;l<oldUniverse.length;l++){
+            var currentElement = document.getElementById(oldUniverse[l].row +' '+ oldUniverse[l].col);
+            currentElement.classList.remove("active");
+            currentElement.classList.add("mySpan");
+        }
+    }
+
+    function run(){
+        // console.log(getAliveNeighbourCount(2,5));
+        // nextGeneration();
+        // plotInUI();
+        // nextGeneration();
+        // plotInUI();
+        // nextGeneration();
+        // plotInUI();
+        // nextGeneration();
+        // plotInUI();
+        var i=0;
+        while(i!=5){
+        // while(true){
+            //doSetTimeout();
+            pause(30000);
+            i++;
+        }
+        // plotInUI();
+        //document.getElementById('grid').onclick = next(); 
+    }
+    function doSetTimeout(){setTimeout(next(),5000)};
+
+    function next(){
+        clearGrid();
+        nextGeneration();
+        plotInUI();
+    }
+    
+    $(function(){
+        initializeGrid();
+        setInterval(() => {
+            next();
+        }, 100);   
+        $('#grid').click(function(){
+            next();
+        });
+    });
+
+    // $(function(){
+    //     initializeGrid();   
+    //     $('#grid').click(function(){
+    //         next();
+    //     });
+    // });
+
 </script>
     
 </body>
