@@ -1,33 +1,30 @@
+package hackerrank.asockmerchant;
+
 import java.io.*;
-import java.math.*;
-import java.security.*;
-import java.text.*;
 import java.util.*;
-import java.util.concurrent.*;
-import java.util.regex.*;
 
 //Question-https://www.hackerrank.com/challenges/sock-merchant/problem?h_l=interview&playlist_slugs%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D=warmup
-public class Solution {
+public class Socks {
 
     // Complete the sockMerchant function below.
     static int sockMerchant(int n, int[] ar) {
-        Map<Integer,Integer> map = new HashMap<>();
-        if(1<=n && n<=100){
-            for(int i=0;i<ar.length;i++){
-                if(1<=ar[i] && ar[i]<=100){
-                    if(map.get(ar[i]) ==null){
-                        map.put(ar[i],1);
-                    }else{
+        Map<Integer, Integer> map = new HashMap<>();
+        if (1 <= n && n <= 100) {
+            for (int i = 0; i < ar.length; i++) {
+                if (1 <= ar[i] && ar[i] <= 100) {
+                    if (map.get(ar[i]) == null) {
+                        map.put(ar[i], 1);
+                    } else {
                         int count = map.get(ar[i]);
-                        map.put(ar[i],++count);
+                        map.put(ar[i], ++count);
                     }
                 }
             }
         }
         System.out.println(map);
         int count = 0;
-        for(Integer i : map.keySet()){
-            count  = count + (map.get(i)/2);
+        for (Integer i : map.keySet()) {
+            count = count + (map.get(i) / 2);
         }
         return count;
     }
